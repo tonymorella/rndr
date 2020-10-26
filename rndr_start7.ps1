@@ -513,12 +513,9 @@ while ($true) {
   $NewLogFileJobs | Add-Content -Path $logFilejobs
 
   #Tail RNDR Log files
-  if (Test-Path $logfile) {
   Get-Content $logFile | Select-Object -Last 5
-  }
-  if (Test-Path $logfile1) {
-  Get-Content $logFile1 | Select-Object -Last 5
-  }
+ #  Get-Content $logFile1 | Select-Object -Last 5
+  
 
   #Add RNDR Job details to log
   #$NewLogFileJobs = "$date,$rndrjobscompleted,$rndrthumbnailssent,$rndrpreviewssent" | Add-Content -Path $logFilejobs
