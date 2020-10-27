@@ -514,7 +514,7 @@ while ($true) {
 
   #Tail RNDR Log files
   Get-Content $logFile | Select-Object -Last 5
- #  Get-Content $logFile1 | Select-Object -Last 5
+  Get-Content $logFile1 | Select-Object -Last 5
   
 
   #Add RNDR Job details to log
