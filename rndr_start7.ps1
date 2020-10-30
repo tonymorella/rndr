@@ -151,7 +151,7 @@ Function Get-CPURAM {
   $totalRam = (Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).Sum
   $availMem = (Get-Counter '\Memory\Available MBytes').CounterSamples.CookedValue
   $cpuTime = (Get-Counter '\Processor(_Total)\% Processor Time').CounterSamples.CookedValue
-  $totaldisk = (Get-CimInstance Win32_LogicalDisk | Measure-Object -Property size)
+  #$totaldisk = (Get-CimInstance Win32_LogicalDisk | Measure-Object -Property size)
   'CPU: ' + $cpuTime.ToString("#,0.0") + '%,' + ' RAM: ' + ($totalRam /1gb) + 'MB' + ', Available RAM: ' + $availMem.ToString("N0") + 'MB (' + (104857600 * $availMem / $totalRam).ToString("#,0.0") + '%)'
 }
 
@@ -253,7 +253,7 @@ $rndrwalletid = (Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\OTO
 $etherscanapikey = 'ERKISXUQFM7UVXKHQV5CMUMDCMQVRW657Q'
 
 Function Get-EtherDetails {
-  $unixdatetoday = ([int](Get-Date -UFormat %s -Millisecond 0))
+  #$unixdatetoday = ([int](Get-Date -UFormat %s -Millisecond 0))
   $etherscanget = "http://api.etherscan.io/api?module=account&action=tokentx&address=$rndrwalletid&startblock=0&endblock=999999999&sort=asc&apikey=$etherscanapikey"
   $etherscanresult = Invoke-WebRequest -uri $etherscanget | ConvertFrom-Json | Select-Object -ExpandProperty result
   $etherscanresulttimes = $etherscanresult | Select-Object timestamp -Last 20 | ForEach-Object { $_.timestamp } 
@@ -308,9 +308,9 @@ while ($true) {
   $rndrthumbnailssent = (Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\OTOY -Name THUMBNAILS_SENT -errorAction SilentlyContinue).THUMBNAILS_SENT
   $rndrscore = (Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\OTOY -Name SCORE -errorAction SilentlyContinue).SCORE
   $rndrappcrash1001a = Get-EventLog -LogName application -EntryType Information -InstanceId 1001 -message *rndr* -After ((Get-Date).AddMinutes(-1)) -errorAction SilentlyContinue
-  $rndrappcrash1001b = Get-EventLog -LogName application -EntryType Information -InstanceId 1001 -message *WUDFHost* -After ((Get-Date).AddMinutes(-1)) -errorAction SilentlyContinue
+  #$rndrappcrash1001b = Get-EventLog -LogName application -EntryType Information -InstanceId 1001 -message *WUDFHost* -After ((Get-Date).AddMinutes(-1)) -errorAction SilentlyContinue
   $rndrappcrash1000a = Get-EventLog -LogName application -EntryType Error -InstanceId 1000 -message *rndr* -After ((Get-Date).AddMinutes(-1)) -errorAction SilentlyContinue
-  $rndrappcrash1000b = Get-EventLog -LogName application -EntryType Error -InstanceId 1000 -message *WUDFHost* -After ((Get-Date).AddMinutes(-1)) -errorAction SilentlyContinue
+  #$rndrappcrash1000b = Get-EventLog -LogName application -EntryType Error -InstanceId 1000 -message *WUDFHost* -After ((Get-Date).AddMinutes(-1)) -errorAction SilentlyContinue
   $rndrvmemcrach = Get-EventLog -LogName system -EntryType Information -InstanceId 26 -After ((Get-Date).AddMinutes(-1)) -errorAction SilentlyContinue
   #$rndrsrvpid = Get-Process -Name $rndrsrv | ForEach-Object {$Processes[$_.Id] } 
   #$RNDRServerCheck = Get-NetTCPConnection -ErrorAction Silent | Where-Object { $rndrsrvpid.State -eq "Established" } | Where-Object {($rndrsrvpid.RemotePort -eq "433") -or ($rndrsrvpid.RemotePort -eq "3002")}
