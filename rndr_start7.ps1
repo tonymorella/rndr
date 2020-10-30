@@ -239,7 +239,7 @@ $logpath = "$mainpath\logs"
 $logFile = "$logpath\RNDRWatchdog.log"
 $logFile1= "$env:LOCALAPPDATA/OtoyRndrNetwork/rndr_log.txt"
 $logFilejobs = "$logpath\RNDRJobs.log"
-$lastboot = (Get-CimInstance -ComputerName localhost -Class CIM_OperatingSystem -ErrorAction SilentlyContinue | Select-Object -ExpandProperty LastBootUpTime )
+#$lastboot = (Get-CimInstance -ComputerName localhost -Class CIM_OperatingSystem -ErrorAction SilentlyContinue | Select-Object -ExpandProperty LastBootUpTime )
 $startdate = Get-Date
 $appRestartCount = 0
 $appRestartDate = Get-Date
@@ -485,7 +485,7 @@ while ($true) {
   Write-Host -ForegroundColor Yellow "   Last checked         - $date"
   Write-Host -ForegroundColor Yellow "   RNDR Watchdog Uptime - $([math]::Round($TimeSpan.Totalhours,2)) hours"
   Write-Host -ForegroundColor Yellow "   Node Uptime          - $([math]::Round($nodeuptime,2)) hours"
-  Write-Host -ForegroundColor Yellow "   Last Boot Time       - $lastboot"
+# Write-Host -ForegroundColor Yellow "   Last Boot Time       - $lastboot"
   Write-Host -ForegroundColor Yellow "   Router               - $router"
   Write-Host -ForegroundColor Yellow "   Jobs Complete        - $rndrjobscompleted"
   Write-Host -ForegroundColor Yellow "   Previews Sent        - $rndrpreviewssent"
