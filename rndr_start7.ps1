@@ -276,7 +276,7 @@ If (!(test-path $logpath)) {
   New-Item -ItemType Directory -Force -Path $logpath 
 }
 Add-Content -Path $logFile -Value (Get-Date) -Encoding UTF8 -NoNewline
-Add-Content -Path $logFile -Value ", RNDR Client Watchdog started boot" -Encoding UTF8
+Add-Content -Path $logFile -Value ", RNDR Client Watchdog started/restart" -Encoding UTF8
 Write-Host ""; ""
 Write-Host $startdate
 Write-Host -ForegroundColor Green "Starting RNDR Watchdog ..."
@@ -445,7 +445,7 @@ while ($true) {
     Write-Host -ForegroundColor Red "VRAM Error Restarting Computer"
     Write-Host ""; ""
     Add-Content -Path $logFile -Value $appRestartDate -Encoding UTF8 -NoNewline
-    Add-Content -Path $logFile -Value ", RNDR VRAM Crash Restarted" -Encoding UTF8
+    Add-Content -Path $logFile -Value ", RNDR VRAM Crash Reboot" -Encoding UTF8
     Exit-RNDR
     Start-CountdownTimer -Seconds $sleep
     Restart-Computer -Force
