@@ -152,7 +152,7 @@ Function Get-CPURAM {
   $availMem = (Get-Counter '\Memory\Available MBytes').CounterSamples.CookedValue
   $cpuTime = (Get-Counter '\Processor(_Total)\% Processor Time').CounterSamples.CookedValue
   #$totaldisk = (Get-CimInstance Win32_LogicalDisk | Measure-Object -Property size)
-  'CPU: ' + $cpuTime.ToString("#,0.0") + '%,' + ' RAM: ' + ($totalRam /1gb) + 'MB' + ', Available RAM: ' + $availMem.ToString("N0") + 'MB (' + (104857600 * $availMem / $totalRam).ToString("#,0.0") + '%)'
+  'CPU: ' + $cpuTime.ToString("#,0.0") + '%,' + ' RAM: ' + ($totalRam / 1gb) + 'MB' + ', Available RAM: ' + $availMem.ToString("N0") + 'MB (' + (104857600 * $availMem / $totalRam).ToString("#,0.0") + '%)'
 }
 
 Function Get-PageFileInfo {
@@ -237,7 +237,7 @@ Set-WindowSize 75 45
 $mainpath = $scriptpath
 $logpath = "$mainpath\logs"
 $logFile = "$logpath\RNDRWatchdog.log"
-$logFile1= "$env:LOCALAPPDATA/OtoyRndrNetwork/rndr_log.txt"
+$logFile1 = "$env:LOCALAPPDATA/OtoyRndrNetwork/rndr_log.txt"
 $logFilejobs = "$logpath\RNDRJobs.log"
 #$lastboot = (Get-CimInstance -ComputerName localhost -Class CIM_OperatingSystem -ErrorAction SilentlyContinue | Select-Object -ExpandProperty LastBootUpTime )
 $startdate = Get-Date
@@ -246,6 +246,7 @@ $appRestartDate = Get-Date
 $progressArray = "|", "/", "-", "\"
 $arrayIndex = 0
 $rndrsrv = "TCPSVCS"
+$nvidiasmipath = $env:ProgramW6432 + "\NVIDIA Corporation\NVSMI\"
 $rndrapp = "rndrclient.exe"
 $router = Get-NetRoute | Where-Object -FilterScript { $_.NextHop -Ne "::" } | Where-Object -FilterScript { $_.NextHop -Ne "0.0.0.0" } | Where-Object -FilterScript { $_.RouteMetric -eq "0" } | ForEach-Object { $_.NextHop }
 $sleep = 420 #Countdown Time sleep before reboot
@@ -281,6 +282,15 @@ Write-Host $startdate
 Write-Host -ForegroundColor Green "Starting RNDR Watchdog ..."
 Write-Host ""
 
+#Add path
+if ($env:Path -like "*$nvidiasmipath*") {
+  Write-Host "$nvidiasmipath already in environment variable Path" 
+}
+else {
+  Write-Host "Adding $Path to environment variable Path now..."
+  [Environment]::SetEnvironmentVariable("Path", $env:Path + ";" + $Path, [System.EnvironmentVariableTarget]::Machine)
+}
+
 #Start RNDR if not running
 if ((Get-Process | Where-Object { $_.Name -eq $rndrsrv }).Count -lt 1) {
   $date = Get-Date
@@ -315,11 +325,11 @@ while ($true) {
   #$rndrsrvpid = Get-Process -Name $rndrsrv | ForEach-Object {$Processes[$_.Id] } 
   #$RNDRServerCheck = Get-NetTCPConnection -ErrorAction Silent | Where-Object { $rndrsrvpid.State -eq "Established" } | Where-Object {($rndrsrvpid.RemotePort -eq "433") -or ($rndrsrvpid.RemotePort -eq "3002")}
   $RNDRServerCheck = ((Get-NetTCPConnection -RemoteAddress "104.20.39.*" -State Established -ErrorAction Silent) `
-  -or (Get-NetTCPConnection -RemoteAddress "104.20.40.*" -State Established -ErrorAction Silent) `
-  -or (Get-NetTCPConnection -RemoteAddress "172.67.38.*" -State Established -ErrorAction Silent) `
-  -or (Get-NetTCPConnection -RemoteAddress "99.84.174.*" -State Established -ErrorAction Silent) `
-  -or (Get-NetTCPConnection -RemoteAddress "52.54.211.*" -State Established -ErrorAction Silent) `
-  -or (Get-NetTCPConnection -RemoteAddress "172.67.16.*" -State Established -ErrorAction Silent)
+      -or (Get-NetTCPConnection -RemoteAddress "104.20.40.*" -State Established -ErrorAction Silent) `
+      -or (Get-NetTCPConnection -RemoteAddress "172.67.38.*" -State Established -ErrorAction Silent) `
+      -or (Get-NetTCPConnection -RemoteAddress "99.84.174.*" -State Established -ErrorAction Silent) `
+      -or (Get-NetTCPConnection -RemoteAddress "52.54.211.*" -State Established -ErrorAction Silent) `
+      -or (Get-NetTCPConnection -RemoteAddress "172.67.16.*" -State Established -ErrorAction Silent)
   )
 
   $nodeuptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime | ForEach-Object { $_.TotalHours }
@@ -349,17 +359,19 @@ while ($true) {
     & "$mainpath\$rndrapp"
     $timeout = New-TimeSpan -Seconds 600
     $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
-    do { Start-sleep -Seconds 5 
-    Write-Host "Waiting for RNDR to start"
+    do {
+      Start-sleep -Seconds 5 
+      Write-Host "Waiting for RNDR to start"
     }
     until (((Get-Process | Where-Object { $_.Name -eq $rndrsrv }).Count -eq 2) -or ($stopwatch.elapsed -gt $timeout))
   } 
 
   #Pause untill benchmark is complete 
   elseif ($null -eq ($rndrscore)) {
-    do { Start-sleep -Seconds 10
-    $rndrscore = (Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\OTOY -Name SCORE -errorAction SilentlyContinue).SCORE  
-    Write-Host "Waiting for benchmark to complete"
+    do {
+      Start-sleep -Seconds 10
+      $rndrscore = (Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\SOFTWARE\OTOY -Name SCORE -errorAction SilentlyContinue).SCORE  
+      Write-Host "Waiting for benchmark to complete"
     }
     until ($null -ne ($rndrscore))
   }
@@ -485,7 +497,7 @@ while ($true) {
   Write-Host -ForegroundColor Yellow "   Last checked         - $date"
   Write-Host -ForegroundColor Yellow "   RNDR Watchdog Uptime - $([math]::Round($TimeSpan.Totalhours,2)) hours"
   Write-Host -ForegroundColor Yellow "   Node Uptime          - $([math]::Round($nodeuptime,2)) hours"
-# Write-Host -ForegroundColor Yellow "   Last Boot Time       - $lastboot"
+  # Write-Host -ForegroundColor Yellow "   Last Boot Time       - $lastboot"
   Write-Host -ForegroundColor Yellow "   Router               - $router"
   Write-Host -ForegroundColor Yellow "   Jobs Complete        - $rndrjobscompleted"
   Write-Host -ForegroundColor Yellow "   Previews Sent        - $rndrpreviewssent"
