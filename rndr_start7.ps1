@@ -324,6 +324,8 @@ while ($true) {
       -or (Get-NetTCPConnection -RemoteAddress "172.67.38.*" -State Established -ErrorAction Silent) `
       -or (Get-NetTCPConnection -RemoteAddress "99.84.174.*" -State Established -ErrorAction Silent) `
       -or (Get-NetTCPConnection -RemoteAddress "52.54.211.*" -State Established -ErrorAction Silent) `
+      -or (Get-NetTCPConnection -RemoteAddress "38.128.74.*" -State Established -ErrorAction Silent) `
+      -or (Get-NetTCPConnection -RemoteAddress "104.22.52.*" -State Established -ErrorAction Silent) `
       -or (Get-NetTCPConnection -RemoteAddress "172.67.16.*" -State Established -ErrorAction Silent)
   )
 
