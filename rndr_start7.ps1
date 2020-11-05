@@ -488,7 +488,7 @@ while ($true) {
   #Details Display
   $TimeSpan = $date - $startdate
   Write-Host -ForegroundColor Yellow "======================================================================="
-  rite-Host -ForegroundColor Yellow  "   Donations ETH        - 0x0517414451423b1C36f101f68f021E2781cfd2AC"
+  write-Host -ForegroundColor Yellow "   Donations ETH        - 0x0517414451423b1C36f101f68f021E2781cfd2AC"
   Write-Host -ForegroundColor Yellow "   Path                 - $mainpath"
   Write-Host -ForegroundColor Yellow "   Last checked         - $date"
   Write-Host -ForegroundColor Yellow "   RNDR Watchdog Uptime - $([math]::Round($TimeSpan.Totalhours,2)) hours"
