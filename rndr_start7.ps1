@@ -73,7 +73,7 @@ function Exit-RNDR {
       $oneProcess.kill()
     } 
   }
-} = 
+}  
 
 #Get Nvidia details function 
 function get-nvidiasmi {
