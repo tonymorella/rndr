@@ -283,15 +283,9 @@ Write-Host -ForegroundColor Green "Starting RNDR Watchdog ..."
 Write-Host ""
 
 #Add path
-if ($env:Path -like "*$nvidiasmipath*") {
-  {
-  Write-Host "$nvidiasmipath already in environment variable Path" 
-  }
- else {
   Write-Host "Adding $nvidiasmipath to environment variable Path now..."
-  [Environment]::SetEnvironmentVariable("Path", $env:Path + ";" + $nvidiasmipath, [System.EnvironmentVariableTarget]::Machine)
- }
-}
+  Set-Item -Path Env:Path -Value ($nvidiasmipath + ";" + $Env:Path)
+ 
 #Start RNDR if not running
 if ((Get-Process | Where-Object { $_.Name -eq $rndrsrv }).Count -lt 1) {
   $date = Get-Date
