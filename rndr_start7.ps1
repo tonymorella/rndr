@@ -73,7 +73,7 @@ function Exit-RNDR {
       $oneProcess.kill()
     } 
   }
-}  
+} 
 
 #Get Nvidia details function 
 function get-nvidiasmi {
@@ -283,8 +283,8 @@ Write-Host -ForegroundColor Green "Starting RNDR Watchdog ..."
 Write-Host ""
 
 #Add path
-  Write-Host "Adding $nvidiasmipath to environment variable Path now..."
-  Set-Item -Path Env:Path -Value ($nvidiasmipath + ";" + $Env:Path)
+Write-Host "Adding $nvidiasmipath to environment variable Path now..."
+Set-Item -Path Env:Path -Value ($nvidiasmipath + ";" + $Env:Path)
  
 #Start RNDR if not running
 if ((Get-Process | Where-Object { $_.Name -eq $rndrsrv }).Count -lt 1) {
@@ -319,18 +319,21 @@ while ($true) {
   $rndrvmemcrach = Get-EventLog -LogName system -EntryType Information -InstanceId 26 -After ((Get-Date).AddMinutes(-1)) -errorAction SilentlyContinue
   #$rndrsrvpid = Get-Process -Name $rndrsrv | ForEach-Object {$Processes[$_.Id] } 
   #$RNDRServerCheck = Get-NetTCPConnection -ErrorAction Silent | Where-Object { $rndrsrvpid.State -eq "Established" } | Where-Object {($rndrsrvpid.RemotePort -eq "433") -or ($rndrsrvpid.RemotePort -eq "3002")}
-  $RNDRServerCheck = ((Get-NetTCPConnection -RemoteAddress "104.20.39.*" -State Established -ErrorAction Silent) `
-      -or (Get-NetTCPConnection -RemoteAddress "104.20.40.*" -State Established -ErrorAction Silent) `
-      -or (Get-NetTCPConnection -RemoteAddress "172.67.38.*" -State Established -ErrorAction Silent) `
-      -or (Get-NetTCPConnection -RemoteAddress "99.84.174.*" -State Established -ErrorAction Silent) `
-      -or (Get-NetTCPConnection -RemoteAddress "52.54.211.*" -State Established -ErrorAction Silent) `
-      -or (Get-NetTCPConnection -RemoteAddress "38.128.74.*" -State Established -ErrorAction Silent) `
-      -or (Get-NetTCPConnection -RemoteAddress "104.22.52.*" -State Established -ErrorAction Silent) `
-      -or (Get-NetTCPConnection -RemoteAddress "172.67.16.*" -State Established -ErrorAction Silent)
-  )
+  $RNDRProcessID = (get-process -name TCPSVCS -errorAction SilentlyContinue).id
+  $RNDRServerCheck = foreach ($oneProcess in $RNDRProcessID) {
+    Get-NetTCPConnection -state ESTABLISHED -OwningProcess $oneProcess -errorAction SilentlyContinue
+  } 
+    
+  # ((Get-NetTCPConnection -RemoteAddress "104.20.39.*" -State Established -ErrorAction Silent) `
+  #    -or (Get-NetTCPConnection -RemoteAddress "104.20.40.*" -State Established -ErrorAction Silent) `
+  #    -or (Get-NetTCPConnection -RemoteAddress "172.67.38.*" -State Established -ErrorAction Silent) `
+  #   -or (Get-NetTCPConnection -RemoteAddress "99.84.174.*" -State Established -ErrorAction Silent) `
+  #    -or (Get-NetTCPConnection -RemoteAddress "52.54.211.*" -State Established -ErrorAction Silent) `
+  #    -or (Get-NetTCPConnection -RemoteAddress "172.67.16.*" -State Established -ErrorAction Silent)
+  #)
 
-  $nodeuptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime | ForEach-Object { $_.TotalHours }
-  #$etherscangetrndrbalanceapi = "https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=0x6De037ef9aD2725EB40118Bb1702EBb27e4Aeb24&address=$rndrwalletid&tag=latest&apikey=$etherscanapikey"
+  #  $nodeuptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime | ForEach-Object { $_.TotalHours }
+  ##$etherscangetrndrbalanceapi = "https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=0x6De037ef9aD2725EB40118Bb1702EBb27e4Aeb24&address=$rndrwalletid&tag=latest&apikey=$etherscanapikey"
   #$etherscangetrndrbalanceget = Invoke-WebRequest -uri $etherscangetrndrbalanceapi | ConvertFrom-Json | Select-Object -ExpandProperty result
   #$etherscangetrndrbalance = (.000000000000000001 * $etherscangetrndrbalanceget).tostring("##########.##") 
   #$etherscangetrndrtoday = (Get-EtherDetails | Where-Object { $_.Time -ge ((Get-Date).AddDays(-1)) } | Select-Object -ExpandProperty RNDR | Measure-Object -sum).sum
@@ -536,6 +539,9 @@ while ($true) {
   #$timer.Enabled = $true
   #Register-ObjectEvent -InputObject $timer -EventName Elapsed -SourceIdentifier Notepad  -Action $NewLogFileJobs 
   
+  Start-sleep -Seconds 30
+}
+#} -TimeoutInSecs 2 -Verbose
   Start-sleep -Seconds 30
 }
 #} -TimeoutInSecs 2 -Verbose
