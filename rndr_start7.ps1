@@ -231,7 +231,7 @@ Function Send-SendGridMail {
 }
 
 #Set Window size
-Set-WindowSize 80 55
+Set-WindowSize 80 50
 
 #Main Vars
 $mainpath = $scriptpath
@@ -321,8 +321,8 @@ while ($true) {
   #$RNDRServerCheck = Get-NetTCPConnection -ErrorAction Silent | Where-Object { $rndrsrvpid.State -eq "Established" } | Where-Object {($rndrsrvpid.RemotePort -eq "433") -or ($rndrsrvpid.RemotePort -eq "3002")}
   $RNDRProcessID = (get-process -name TCPSVCS -errorAction SilentlyContinue).id
   $RNDRServerCheck = foreach ($oneProcess in $RNDRProcessID) {Get-NetTCPConnection -state ESTABLISHED -OwningProcess $oneProcess -errorAction SilentlyContinue} 
-    
-  # ((Get-NetTCPConnection -RemoteAddress "104.20.39.*" -State Established -ErrorAction Silent) `
+
+# ((Get-NetTCPConnection -RemoteAddress "104.20.39.*" -State Established -ErrorAction Silent) `
   #    -or (Get-NetTCPConnection -RemoteAddress "104.20.40.*" -State Established -ErrorAction Silent) `
   #    -or (Get-NetTCPConnection -RemoteAddress "172.67.38.*" -State Established -ErrorAction Silent) `
   #   -or (Get-NetTCPConnection -RemoteAddress "99.84.174.*" -State Established -ErrorAction Silent) `
