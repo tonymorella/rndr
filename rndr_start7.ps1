@@ -449,16 +449,16 @@ while ($true) {
   }
   
   #Check for RNDR App Connection to Server restart app if
-  elseif (($RNDRServerCheck) -eq $False) {
-    $appRestartCount++
-    $appRestartDate = Get-Date
-    Clear-Host
-    Write-Host -ForegroundColor Red "No connection to RNDR Client Server. Restarting App"
-    Write-Host ""; ""
-    Exit-RNDR
-    Add-Content -Path $logFile -Value $appRestartDate -Encoding UTF8 -NoNewline
-    Add-Content -Path $logFile -Value ", No connection to RNDR Client Server" -Encoding UTF8
-  }  
+  #elseif (($RNDRServerCheck) -eq $False) {
+  #  $appRestartCount++
+  #  $appRestartDate = Get-Date
+  #  Clear-Host
+  #  Write-Host -ForegroundColor Red "No connection to RNDR Client Server. Restarting App"
+  #  Write-Host ""; ""
+  #  Exit-RNDR
+  #  Add-Content -Path $logFile -Value $appRestartDate -Encoding UTF8 -NoNewline
+  #  Add-Content -Path $logFile -Value ", No connection to RNDR Client Server" -Encoding UTF8
+  #}  
 
   #Check connection to Router, reboot if False
   #elseif (-not (Test-Connection $router -Count 1 -Quiet)) {
