@@ -538,11 +538,9 @@ while ($true) {
   $NewLogFileJobs | Add-Content -Path $logFilejobs
 
   #Tail RNDR Log files
-  $logs1 = Get-Content $logFile | Select-Object -Last 5 
-  $logs2 = Get-Content $logFile1 | Select-String -Pattern "ERROR" | Select-Object -Last 5 
-  
-  $logs1
-  $logs2
+  Get-Content $logFile | Select-Object -Last 5 
+  Get-Content $logFile1 | Select-String -Pattern "ERROR" | Select-Object -Last 5 
+  Write-Host -ForegroundColor Yellow "====================================================================="
 
   #Add RNDR Job details to log
   #$NewLogFileJobs = "$date,$rndrjobscompleted,$rndrthumbnailssent,$rndrpreviewssent" | Add-Content -Path $logFilejobs
