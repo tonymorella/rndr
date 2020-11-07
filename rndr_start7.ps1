@@ -322,27 +322,27 @@ while ($true) {
   #$rndrsrvpid1 =  $rndrsrvpid.ForEach({ [RegEx]::Escape($_) }) -join '|'
   #$RNDRServerCheck = Get-NetTCPConnection -ErrorAction SilentlyContinue | Where-Object { $rndrsrvpid1.State -like "Established" } | Where-Object {($rndrsrvpid1.RemotePort -eq "433") -or ($rndrsrvpid1.RemotePort -eq "3002")}
   
-  $RNDRProcessID = Get-Process -name TCPSVCS -errorAction SilentlyContinue
-#  foreach ($oneProcess in $RNDRProcessID) {
-#    if (Get-NetTCPConnection -state ESTABLISHED -RemotePort 443 -OwningProcess $oneProcess) {
-#      $RNDRServerCheck = $true
-#    } 
-#    else {
-#      $RNDRServerCheck = $false  
-#    }
-#  }
+  #$RNDRProcessID = Get-Process -name TCPSVCS -errorAction SilentlyContinue
+  #  foreach ($oneProcess in $RNDRProcessID) {
+  #    if (Get-NetTCPConnection -state ESTABLISHED -RemotePort 443 -OwningProcess $oneProcess) {
+  #      $RNDRServerCheck = $true
+  #    } 
+  #    else {
+  #      $RNDRServerCheck = $false  
+  #    }
+  #  }
 
-#  $RNDRProcessID = (Get-Process -name TCPSVCS -errorAction SilentlyContinue).id
-#  $regex_pid =  $RNDRProcessID.ForEach({ [RegEx]::Escape($_) }) -join '|'
-#  $RNDRServerCheck = Get-NetTCPConnection -State Established -RemotePort 443 | Select-Object * | Where-Object  {$_.OwningProcess -match $regex_pid}
+  #  $RNDRProcessID = (Get-Process -name TCPSVCS -errorAction SilentlyContinue).id
+  #  $regex_pid =  $RNDRProcessID.ForEach({ [RegEx]::Escape($_) }) -join '|'
+  #  $RNDRServerCheck = Get-NetTCPConnection -State Established -RemotePort 443 | Select-Object * | Where-Object  {$_.OwningProcess -match $regex_pid}
 
-$RNDRServerCheck = ((Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.20.39.*" -ErrorAction Silent) `
-     -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.20.40.*" -ErrorAction Silent) `
-     -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "172.67.38.*" -ErrorAction Silent) `
-     -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "99.84.174.*" -ErrorAction Silent) `
-     -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "52.54.211.*" -ErrorAction Silent) `
-     -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "172.67.16.*" -ErrorAction Silent)
- )
+  $RNDRServerCheck = ((Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.20.39.*" -ErrorAction Silent) `
+      -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.20.40.*" -ErrorAction Silent) `
+      -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "172.67.38.*" -ErrorAction Silent) `
+      -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "99.84.174.*" -ErrorAction Silent) `
+      -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "52.54.211.*" -ErrorAction Silent) `
+      -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "172.67.16.*" -ErrorAction Silent)
+  )
 
   #$nodeuptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime | ForEach-Object { $_.TotalHours }
   ##$etherscangetrndrbalanceapi = "https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=0x6De037ef9aD2725EB40118Bb1702EBb27e4Aeb24&address=$rndrwalletid&tag=latest&apikey=$etherscanapikey"
@@ -539,8 +539,8 @@ $RNDRServerCheck = ((Get-NetTCPConnection -State Established -RemotePort 443 -Re
   $NewLogFileJobs | Add-Content -Path $logFilejobs
 
   #Tail RNDR Log files
-  Get-Content $logFile | Select-Object -Last 5
-  Get-Content $logFile1 | Select-Object -Last 5
+  Get-Content $logFile | Select-Object -Last 5 
+  Get-Content $logFile1 | Select-String -Pattern "ERROR" -SimpleMatch | Select-Object -Last 5
   
 
   #Add RNDR Job details to log
