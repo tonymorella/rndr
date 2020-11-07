@@ -323,10 +323,12 @@ while ($true) {
   $RNDRProcessID = (get-process -name TCPSVCS -errorAction SilentlyContinue).id
   foreach ($oneProcess in $RNDRProcessID) {
 		if (Get-NetTCPConnection -state ESTABLISHED -OwningProcess $oneProcess -errorAction SilentlyContinue){
-			return ($RNDRServerCheck = $True);
-		}
-			return ($RNDRServerCheck = $False);
-		}
+			return ($RNDRServerCheck = $True)
+    }
+     else {
+			return ($RNDRServerCheck = $False)
+    }
+  }
 
     # ((Get-NetTCPConnection -RemoteAddress "104.20.39.*" -State Established -ErrorAction Silent) `
   #    -or (Get-NetTCPConnection -RemoteAddress "104.20.40.*" -State Established -ErrorAction Silent) `
@@ -454,7 +456,7 @@ while ($true) {
     Restart-Computer -Force
   }
   
-  Check for RNDR App Connection to Server restart app if
+  #Check for RNDR App Connection to Server restart app if
   elseif (($RNDRServerCheck) -eq $False) {
     $appRestartCount++
     $appRestartDate = Get-Date
