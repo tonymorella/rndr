@@ -317,28 +317,34 @@ while ($true) {
   $rndrappcrash1000a = Get-EventLog -LogName application -EntryType Error -InstanceId 1000 -message *rndr* -After ((Get-Date).AddMinutes(-1)) -errorAction SilentlyContinue
   #$rndrappcrash1000b = Get-EventLog -LogName application -EntryType Error -InstanceId 1000 -message *WUDFHost* -After ((Get-Date).AddMinutes(-1)) -errorAction SilentlyContinue
   $rndrvmemcrach = Get-EventLog -LogName system -EntryType Information -InstanceId 26 -After ((Get-Date).AddMinutes(-1)) -errorAction SilentlyContinue
-  #$rndrsrvpid = Get-Process -Name $rndrsrv | ForEach-Object {$Processes[$_.Id] } 
-  #$RNDRServerCheck = Get-NetTCPConnection -ErrorAction Silent | Where-Object { $rndrsrvpid.State -eq "Established" } | Where-Object {($rndrsrvpid.RemotePort -eq "433") -or ($rndrsrvpid.RemotePort -eq "3002")}
   
-  $RNDRProcessID = (get-process -name TCPSVCS -errorAction SilentlyContinue).id
-  foreach ($oneProcess in $RNDRProcessID) {
-		if (Get-NetTCPConnection -state ESTABLISHED -OwningProcess $oneProcess -errorAction SilentlyContinue){
-			return ($RNDRServerCheck = $True)
-    }
-     else {
-			return ($RNDRServerCheck = $False)
-    }
-  }
+  #$rndrsrvpid = (Get-Process -Name $rndrsrv -ErrorAction SilentlyContinue).Id
+  #$rndrsrvpid1 =  $rndrsrvpid.ForEach({ [RegEx]::Escape($_) }) -join '|'
+  #$RNDRServerCheck = Get-NetTCPConnection -ErrorAction SilentlyContinue | Where-Object { $rndrsrvpid1.State -like "Established" } | Where-Object {($rndrsrvpid1.RemotePort -eq "433") -or ($rndrsrvpid1.RemotePort -eq "3002")}
+  
+  $RNDRProcessID = Get-Process -name TCPSVCS -errorAction SilentlyContinue
+#  foreach ($oneProcess in $RNDRProcessID) {
+#    if (Get-NetTCPConnection -state ESTABLISHED -RemotePort 443 -OwningProcess $oneProcess) {
+#      $RNDRServerCheck = $true
+#    } 
+#    else {
+#      $RNDRServerCheck = $false  
+#    }
+#  }
 
-    # ((Get-NetTCPConnection -RemoteAddress "104.20.39.*" -State Established -ErrorAction Silent) `
-  #    -or (Get-NetTCPConnection -RemoteAddress "104.20.40.*" -State Established -ErrorAction Silent) `
-  #    -or (Get-NetTCPConnection -RemoteAddress "172.67.38.*" -State Established -ErrorAction Silent) `
-  #   -or (Get-NetTCPConnection -RemoteAddress "99.84.174.*" -State Established -ErrorAction Silent) `
-  #    -or (Get-NetTCPConnection -RemoteAddress "52.54.211.*" -State Established -ErrorAction Silent) `
-  #    -or (Get-NetTCPConnection -RemoteAddress "172.67.16.*" -State Established -ErrorAction Silent)
-  #)
+#  $RNDRProcessID = (Get-Process -name TCPSVCS -errorAction SilentlyContinue).id
+#  $regex_pid =  $RNDRProcessID.ForEach({ [RegEx]::Escape($_) }) -join '|'
+#  $RNDRServerCheck = Get-NetTCPConnection -State Established -RemotePort 443 | Select-Object * | Where-Object  {$_.OwningProcess -match $regex_pid}
 
-  #  $nodeuptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime | ForEach-Object { $_.TotalHours }
+$RNDRServerCheck = ((Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.20.39.*" -ErrorAction Silent) `
+     -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.20.40.*" -ErrorAction Silent) `
+     -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "172.67.38.*" -ErrorAction Silent) `
+     -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "99.84.174.*" -ErrorAction Silent) `
+     -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "52.54.211.*" -ErrorAction Silent) `
+     -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "172.67.16.*" -ErrorAction Silent)
+ )
+
+  #$nodeuptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime | ForEach-Object { $_.TotalHours }
   ##$etherscangetrndrbalanceapi = "https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=0x6De037ef9aD2725EB40118Bb1702EBb27e4Aeb24&address=$rndrwalletid&tag=latest&apikey=$etherscanapikey"
   #$etherscangetrndrbalanceget = Invoke-WebRequest -uri $etherscangetrndrbalanceapi | ConvertFrom-Json | Select-Object -ExpandProperty result
   #$etherscangetrndrbalance = (.000000000000000001 * $etherscangetrndrbalanceget).tostring("##########.##") 
