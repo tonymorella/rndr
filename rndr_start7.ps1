@@ -540,9 +540,8 @@ while ($true) {
 
   #Tail RNDR Log files
   Get-Content $logFile | Select-Object -Last 5 
-  Get-Content $logFile1 | Select-String -Pattern "ERROR" -SimpleMatch | Select-Object -Last 5
+  Get-Content $logFile1 | Select-String -Pattern "ERROR" -SimpleMatch | Select-Object -Last 5 
   
-
   #Add RNDR Job details to log
   #$NewLogFileJobs = "$date,$rndrjobscompleted,$rndrthumbnailssent,$rndrpreviewssent" | Add-Content -Path $logFilejobs
   #$timer = New-Object Timers.Timer
