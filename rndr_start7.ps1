@@ -523,20 +523,14 @@ while ($true) {
   #Write-Host "   RNDR Past 24 Hr      - $etherscangetrndrtoday"
   #Write-Host "   RNDR Past Week       - $etherscangetrndrweek"
   Write-Host -ForegroundColor Yellow "====================================================================="
-  Write-Host " "
-
   #Show Page File Use
   Get-PageFileInfo
-
   #Show CPU and RAM info
   Get-CPURAM
-  
   Write-Host -ForegroundColor Yellow "====================================================================="
-  
   #Show Nvidia Details
   $header = 'IX', 'Name', 'GPU%', 'VRAM Used', 'VRAM%', 'Watts  ', 'Temp', 'PS', 'Fan%'
   get-nvidiasmi | ConvertFrom-Csv -Header $header | Format-Table
-  
   Write-Host -ForegroundColor Yellow "====================================================================="
   
   #Add RNDR Job details to log
@@ -545,7 +539,7 @@ while ($true) {
 
   #Tail RNDR Log files
   $logs1 = Get-Content $logFile | Select-Object -Last 5 
-  $logs2 = Get-Content $logFile1 | Select-String -Pattern "ERROR" -SimpleMatch | Select-Object -Last 5 
+  $logs2 = Get-Content $logFile1 | Select-String -Pattern "ERROR" | Select-Object -Last 5 
   
   $logs1
   $logs2
