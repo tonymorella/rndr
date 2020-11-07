@@ -523,23 +523,29 @@ while ($true) {
   #Write-Host "   RNDR Past 24 Hr      - $etherscangetrndrtoday"
   #Write-Host "   RNDR Past Week       - $etherscangetrndrweek"
   Write-Host -ForegroundColor Yellow "====================================================================="
+  
   #Show Page File Use
   Get-PageFileInfo
+  
   #Show CPU and RAM info
   Get-CPURAM
   Write-Host -ForegroundColor Yellow "====================================================================="
+ 
   #Show Nvidia Details
   $header = 'IX', 'Name', 'GPU%', 'VRAM Used', 'VRAM%', 'Watts  ', 'Temp', 'PS', 'Fan%'
   get-nvidiasmi | ConvertFrom-Csv -Header $header | Format-Table
   Write-Host -ForegroundColor Yellow "====================================================================="
-  #Add RNDR Job details to log
-  $NewLogFileJobs = "$date,$rndrjobscompleted,$rndrthumbnailssent,$rndrpreviewssent"
-  $NewLogFileJobs | Add-Content -Path $logFilejobs
+  
   #Tail RNDR Log files
   Get-Content $logFile1 | Select-String -Pattern "ERROR" | Select-Object -Last 5 
   Write-Host -ForegroundColor Yellow "====================================================================="
   Get-Content $logFile | Select-Object -Last 5 
   Write-Host -ForegroundColor Yellow "====================================================================="
+
+  #Add RNDR Job details to log
+  $NewLogFileJobs = "$date,$rndrjobscompleted,$rndrthumbnailssent,$rndrpreviewssent"
+  $NewLogFileJobs | Add-Content -Path $logFilejobs
+  
   #Add RNDR Job details to log
   #$NewLogFileJobs = "$date,$rndrjobscompleted,$rndrthumbnailssent,$rndrpreviewssent" | Add-Content -Path $logFilejobs
   #$timer = New-Object Timers.Timer
