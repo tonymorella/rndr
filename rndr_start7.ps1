@@ -319,10 +319,16 @@ while ($true) {
   $rndrvmemcrach = Get-EventLog -LogName system -EntryType Information -InstanceId 26 -After ((Get-Date).AddMinutes(-1)) -errorAction SilentlyContinue
   #$rndrsrvpid = Get-Process -Name $rndrsrv | ForEach-Object {$Processes[$_.Id] } 
   #$RNDRServerCheck = Get-NetTCPConnection -ErrorAction Silent | Where-Object { $rndrsrvpid.State -eq "Established" } | Where-Object {($rndrsrvpid.RemotePort -eq "433") -or ($rndrsrvpid.RemotePort -eq "3002")}
+  
   $RNDRProcessID = (get-process -name TCPSVCS -errorAction SilentlyContinue).id
-  $RNDRServerCheck = foreach ($oneProcess in $RNDRProcessID) {Get-NetTCPConnection -state ESTABLISHED -OwningProcess $oneProcess -errorAction SilentlyContinue} 
+  foreach ($oneProcess in $RNDRProcessID) {
+		if (Get-NetTCPConnection -state ESTABLISHED -OwningProcess $oneProcess -errorAction SilentlyContinue){
+			return ($RNDRServerCheck = $True);
+		}
+			return ($RNDRServerCheck = $False);
+		}
 
-# ((Get-NetTCPConnection -RemoteAddress "104.20.39.*" -State Established -ErrorAction Silent) `
+    # ((Get-NetTCPConnection -RemoteAddress "104.20.39.*" -State Established -ErrorAction Silent) `
   #    -or (Get-NetTCPConnection -RemoteAddress "104.20.40.*" -State Established -ErrorAction Silent) `
   #    -or (Get-NetTCPConnection -RemoteAddress "172.67.38.*" -State Established -ErrorAction Silent) `
   #   -or (Get-NetTCPConnection -RemoteAddress "99.84.174.*" -State Established -ErrorAction Silent) `
@@ -448,17 +454,17 @@ while ($true) {
     Restart-Computer -Force
   }
   
-  #Check for RNDR App Connection to Server restart app if
-  #elseif (($RNDRServerCheck) -eq $False) {
-  #  $appRestartCount++
-  #  $appRestartDate = Get-Date
-  #  Clear-Host
-  #  Write-Host -ForegroundColor Red "No connection to RNDR Client Server. Restarting App"
-  #  Write-Host ""; ""
-  #  Exit-RNDR
-  #  Add-Content -Path $logFile -Value $appRestartDate -Encoding UTF8 -NoNewline
-  #  Add-Content -Path $logFile -Value ", No connection to RNDR Client Server" -Encoding UTF8
-  #}  
+  Check for RNDR App Connection to Server restart app if
+  elseif (($RNDRServerCheck) -eq $False) {
+    $appRestartCount++
+    $appRestartDate = Get-Date
+    Clear-Host
+    Write-Host -ForegroundColor Red "No connection to RNDR Client Server. Restarting App"
+    Write-Host ""; ""
+    Exit-RNDR
+    Add-Content -Path $logFile -Value $appRestartDate -Encoding UTF8 -NoNewline
+    Add-Content -Path $logFile -Value ", No connection to RNDR Client Server" -Encoding UTF8
+  }  
 
   #Check connection to Router, reboot if False
   #elseif (-not (Test-Connection $router -Count 1 -Quiet)) {
