@@ -532,16 +532,13 @@ while ($true) {
   $header = 'IX', 'Name', 'GPU%', 'VRAM Used', 'VRAM%', 'Watts  ', 'Temp', 'PS', 'Fan%'
   get-nvidiasmi | ConvertFrom-Csv -Header $header | Format-Table
   Write-Host -ForegroundColor Yellow "====================================================================="
-  
   #Add RNDR Job details to log
   $NewLogFileJobs = "$date,$rndrjobscompleted,$rndrthumbnailssent,$rndrpreviewssent"
   $NewLogFileJobs | Add-Content -Path $logFilejobs
-
   #Tail RNDR Log files
   Get-Content $logFile | Select-Object -Last 5 
   Get-Content $logFile1 | Select-String -Pattern "ERROR" | Select-Object -Last 5 
   Write-Host -ForegroundColor Yellow "====================================================================="
-
   #Add RNDR Job details to log
   #$NewLogFileJobs = "$date,$rndrjobscompleted,$rndrthumbnailssent,$rndrpreviewssent" | Add-Content -Path $logFilejobs
   #$timer = New-Object Timers.Timer
@@ -549,6 +546,5 @@ while ($true) {
   #$timer.AutoReset = $true  # do not enable the event again after its been fired
   #$timer.Enabled = $true
   #Register-ObjectEvent -InputObject $timer -EventName Elapsed -SourceIdentifier Notepad  -Action $NewLogFileJobs 
-  
   Start-sleep -Seconds 30
 }
