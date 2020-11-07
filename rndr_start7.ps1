@@ -522,7 +522,7 @@ while ($true) {
   #Write-Host "   RNDR Balance         - $etherscangetrndrbalance"
   #Write-Host "   RNDR Past 24 Hr      - $etherscangetrndrtoday"
   #Write-Host "   RNDR Past Week       - $etherscangetrndrweek"
-  Write-Host -ForegroundColor  "====================================================================="
+  Write-Host -ForegroundColor Yellow "====================================================================="
   Write-Host " "
 
   #Show Page File Use
