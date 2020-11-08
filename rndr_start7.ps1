@@ -346,7 +346,8 @@ while ($true) {
       -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "172.67.16.*" -ErrorAction Silent)
   )
 
-  #$nodeuptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime | ForEach-Object { $_.TotalHours }
+  $nodeuptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime | ForEach-Object { $_.TotalHours }
+  
   ##$etherscangetrndrbalanceapi = "https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=0x6De037ef9aD2725EB40118Bb1702EBb27e4Aeb24&address=$rndrwalletid&tag=latest&apikey=$etherscanapikey"
   #$etherscangetrndrbalanceget = Invoke-WebRequest -uri $etherscangetrndrbalanceapi | ConvertFrom-Json | Select-Object -ExpandProperty result
   #$etherscangetrndrbalance = (.000000000000000001 * $etherscangetrndrbalanceget).tostring("##########.##") 
