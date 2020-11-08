@@ -1,5 +1,7 @@
 Write-Verbose "Getting latest Version" -Verbose
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 class SourceForge {
     [string]        $Project = $Null
     [PSCustomObject]$LatestRelease = $Null
