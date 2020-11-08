@@ -539,7 +539,7 @@ while ($true) {
   Write-Host -ForegroundColor Yellow "====================================================================="
   
   #Tail RNDR Log files
-  Get-Content $logFile1 | Select-Object -Last 5 
+  Get-Content $logFile1 | Where-Object {$_ -like ‘*ERROR*’} | Select-Object -Last 5 
   Write-Host -ForegroundColor Yellow "====================================================================="
   Get-Content $logFile | Select-Object -Last 5 
   Write-Host -ForegroundColor Yellow "====================================================================="
