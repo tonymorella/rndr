@@ -1,35 +1,19 @@
 @echo off
 
-rem --------------------------------------------------
-rem A Windows batch file to slim down NVIDIA drivers.
-rem Author: XhmikosR
-rem Licensed under the MIT License
-rem See help for more info
-rem --------------------------------------------------
-
-
 :start
 setlocal
 
-set "FOLDERS_TO_KEEP_MINIMAL=Display.Driver NVI2"
 set "FOLDERS_TO_KEEP_SLIM=Display.Driver HDAudio NVI2 PhysX PPC"
-set "FILES_TO_KEEP_MINIMAL=EULA.txt ListDevices.txt setup.cfg setup.exe"
-set "FILES_TO_KEEP_SLIM=%FILES_TO_KEEP_MINIMAL%"
+set "FILES_TO_KEEP_SLIM=EULA.txt ListDevices.txt setup.cfg setup.exe"
 
 set "BATCH_FILENAME=%~nx0"
 set "ARG1=%~1"
 set "FULL_PATH=%ARG1%"
 set "FILENAME=%~n1"
-set "WORK_FOLDER=%FILENAME%"
+set "WORK_FOLDER=c:\temp-nvidia\"
 set "SCRIPT_VERSION=0.5"
 
 title %BATCH_FILENAME% %FILENAME%
-
-rem Check if any argument is passed; if not show the help screen
-if "%ARG1%" == "" goto help
-if "%ARG1%" == "--help" goto help
-if "%ARG1%" == "-help" goto help
-if "%ARG1%" == "/help" goto help
 
 rem Try to detect 7-Zip or 7za.exe; if none is found, show a message and exit
 call :detect_sevenzip_path
@@ -61,14 +45,6 @@ if %ERRORLEVEL% neq 0 (
 rem Switch to the drivers folder
 pushd "%WORK_FOLDER%"
 
-rem Minimal
-call :copy "minimal"
-if ERRORLEVEL 1 goto exit
-call :modify_setup_cfg
-if ERRORLEVEL 1 goto exit
-call :create_archive "minimal"
-if ERRORLEVEL 1 goto exit
-
 rem Slim
 call :copy "slim"
 if ERRORLEVEL 1 goto exit
@@ -90,28 +66,6 @@ pause >nul
 exit /b
 
 
-rem Subroutines
-:help
-echo --------------------------------------------------
-echo %BATCH_FILENAME% v%SCRIPT_VERSION%
-echo A Windows batch file to slim down NVIDIA drivers.
-echo Author: XhmikosR
-echo Licensed under the MIT License
-echo.
-echo Requirements:
-echo   * a) 7-Zip installed or b) 7za.exe in your %%PATH%%, or in the same folder as this script
-echo   * A recent Windows version; the script is only tested on Windows 10
-echo   * The NVIDIA driver already downloaded somewhere on your computer :)
-echo.
-echo Usage: %BATCH_FILENAME% NVIDIA_DRIVER_FILE.exe
-echo.
-echo This will create two 7z archives, minimal and slim:
-echo   * "minimal" includes only the driver
-echo   * "slim" includes the driver, HDAudio, PhysX and USB-C HDMI Driver
-echo --------------------------------------------------
-goto exit
-
-
 :copy
 set "TYPE=%~1"
 set "TEMP_DIR=_temp_%TYPE%"
@@ -127,13 +81,8 @@ if ERRORLEVEL 1 exit /b %ERRORLEVEL%
 
 exit /b 0
 
-
 :copy_folders
-if "%TYPE%" == "minimal" (
-  set "TEMP_FOLDERS_TO_KEEP=%FOLDERS_TO_KEEP_MINIMAL%"
-) else (
-  set "TEMP_FOLDERS_TO_KEEP=%FOLDERS_TO_KEEP_SLIM%"
-)
+set "TEMP_FOLDERS_TO_KEEP=%FOLDERS_TO_KEEP_SLIM%"
 
 rem Copy the folders we want to keep into the temporary folder
 for /d %%G in (%TEMP_FOLDERS_TO_KEEP%) do (
@@ -151,13 +100,9 @@ for /d %%G in (%TEMP_FOLDERS_TO_KEEP%) do (
 
 exit /b 0
 
-
 :copy_files
-if "%TYPE%" == "minimal" (
-  set "TEMP_FILES_TO_KEEP=%FILES_TO_KEEP_MINIMAL%"
-) else (
-  set "TEMP_FILES_TO_KEEP=%FILES_TO_KEEP_SLIM%"
-)
+set "TEMP_FILES_TO_KEEP=%FILES_TO_KEEP_SLIM%"
+
 
 rem Copy the files we want to keep into the temporary folder
 for %%G in (%TEMP_FILES_TO_KEEP%) do (
@@ -177,7 +122,6 @@ exit /b 0
 
 
 :modify_setup_cfg
-rem Remove the files required after 397.93, but are not needed
 type "%TEMP_DIR%\setup.cfg" | findstr /v "EulaHtmlFile FunctionalConsentFile PrivacyPolicyFile">"%TEMP_DIR%\setup2.cfg"
 if ERRORLEVEL 1 exit /b %ERRORLEVEL%
 
