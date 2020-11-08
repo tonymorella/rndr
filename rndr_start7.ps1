@@ -339,6 +339,7 @@ while ($true) {
 
   $RNDRServerCheck = ((Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.20.39.*" -ErrorAction Silent) `
       -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.20.40.*" -ErrorAction Silent) `
+      -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.22.52.*" -ErrorAction Silent) `
       -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "172.67.38.*" -ErrorAction Silent) `
       -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "99.84.174.*" -ErrorAction Silent) `
       -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "52.54.211.*" -ErrorAction Silent) `
