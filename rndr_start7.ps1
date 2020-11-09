@@ -361,6 +361,13 @@ while ($true) {
   #Redo-Command -ScriptBlock {
   #Check is RNDR is running if not start 
   if ((Get-Process | Where-Object { $_.Name -eq $rndrsrv }).Count -lt 2) {
+    $timeout = New-TimeSpan -Seconds 600
+    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+    do {
+      Start-sleep -Seconds 5 
+      Write-Host "Waiting for RNDR to start"
+    }
+    until (((Get-Process | Where-Object { $_.Name -eq $rndrsrv }).Count -eq 2) -or ($stopwatch.elapsed -gt $timeout))
     $appRestartCount++
     $appRestartDate = Get-Date
     Clear-Host
@@ -372,13 +379,6 @@ while ($true) {
     Add-Content -Path $logFile -Value ", RNDR Client Restarted Process not running" -Encoding UTF8
     & "$mainpath\Start-Cleanup.ps1"
     & "$mainpath\$rndrapp"
-    $timeout = New-TimeSpan -Seconds 600
-    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
-    do {
-      Start-sleep -Seconds 5 
-      Write-Host "Waiting for RNDR to start"
-    }
-    until (((Get-Process | Where-Object { $_.Name -eq $rndrsrv }).Count -eq 2) -or ($stopwatch.elapsed -gt $timeout))
   } 
 
   #Pause untill benchmark is complete 
