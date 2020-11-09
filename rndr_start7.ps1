@@ -397,11 +397,11 @@ while ($true) {
     $appRestartCount++
     $appRestartDate = Get-Date
     Clear-Host
-    Write-Host -ForegroundColor Red "RNDR Client Hung, Restarting App"
+    Write-Host -ForegroundColor Red "RNDR Client Not Responding, Restarting App"
     Write-Host ""; ""
     Exit-RNDR
     Add-Content -Path $logFile -Value $appRestartDate -Encoding UTF8 -NoNewline
-    Add-Content -Path $logFile -Value ", RNDR Client Hung Restarted App" -Encoding UTF8
+    Add-Content -Path $logFile -Value ", RNDR Client Not Responding, Restarting App" -Encoding UTF8
   }  
 
   #Check for RNDR DLL Crash Restart RNDR Client Error 1000
