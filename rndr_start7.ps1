@@ -303,8 +303,8 @@ if ((Get-Process | Where-Object { $_.Name -eq $rndrsrv }).Count -lt 1) {
   $timeout = New-TimeSpan -Seconds 600
   $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
   do { Start-sleep -Seconds 10 }
-  until (((Get-Process | Where-Object { $_.Name -eq $rndrsrv }).Count -eq 2) -or ($stopwatch.elapsed -gt $timeout))
-  Start-sleep -Seconds 30
+    until (((Get-Process | Where-Object { $_.Name -eq $rndrsrv }).Count -eq 2) -or ($stopwatch.elapsed -gt $timeout))
+  Start-sleep -Seconds 60
 } 
 
 # Main RNDR Check Loop1
