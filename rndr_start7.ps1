@@ -472,6 +472,7 @@ while ($true) {
   }
   
   #Check for RNDR App Connection to Server restart app if
+  Start-sleep -Seconds 20
   elseif (($RNDRServerCheck) -eq $False) {
     $appRestartCount++
     $appRestartDate = Get-Date
