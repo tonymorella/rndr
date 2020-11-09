@@ -304,6 +304,7 @@ if ((Get-Process | Where-Object { $_.Name -eq $rndrsrv }).Count -lt 1) {
   $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
   do { Start-sleep -Seconds 10 }
   until (((Get-Process | Where-Object { $_.Name -eq $rndrsrv }).Count -eq 2) -or ($stopwatch.elapsed -gt $timeout))
+  Start-sleep -Seconds 60
 } 
 
 # Main RNDR Check Loop1
@@ -390,6 +391,7 @@ while ($true) {
       Write-Host "Waiting for benchmark to complete"
     }
     until ($null -ne ($rndrscore))
+    Start-sleep -Seconds 30
   }
 
   #Check if RNDR app is hung and restart if true 
@@ -402,6 +404,7 @@ while ($true) {
     Exit-RNDR
     Add-Content -Path $logFile -Value $appRestartDate -Encoding UTF8 -NoNewline
     Add-Content -Path $logFile -Value ", RNDR Client Not Responding, Restarting App" -Encoding UTF8
+    Start-sleep -Seconds 2
   }  
 
   #Check for RNDR DLL Crash Restart RNDR Client Error 1000
@@ -414,6 +417,7 @@ while ($true) {
     Exit-RNDR
     Add-Content -Path $logFile -Value $appRestartDate -Encoding UTF8 -NoNewline
     Add-Content -Path $logFile -Value ", RNDR Faulting application Error 1000. Restarting App" -Encoding UTF8
+    Start-sleep -Seconds 2
   }  
   
   #Check for DLL Crash Restart RNDR Client Error 1000
@@ -438,6 +442,7 @@ while ($true) {
     Exit-RNDR
     Add-Content -Path $logFile -Value $appRestartDate -Encoding UTF8 -NoNewline
     Add-Content -Path $logFile -Value ", RNDR FaultFault RNDR bucket Error 1001. Restarting App" -Encoding UTF8
+    Start-sleep -Seconds 2
   }  
   
   #Check for WUDFHost Crash Restart RNDR Client Error 1001
@@ -476,6 +481,7 @@ while ($true) {
     Exit-RNDR
     Add-Content -Path $logFile -Value $appRestartDate -Encoding UTF8 -NoNewline
     Add-Content -Path $logFile -Value ", No connection to RNDR Client Server" -Encoding UTF8
+    Start-sleep -Seconds 2
   }  
 
   #Check connection to Router, reboot if False
