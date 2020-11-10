@@ -60,7 +60,7 @@ timeout /T 5 /NOBREAK > nul
 :: powershell -NoProfile -Command "Install-Module pssqlite -SkipPublisherCheck -Force"
 
 :: Change pagefile size
-wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=32000,MaximumSize=64000
+wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=42000,MaximumSize=84000
 
 ::  Reboot computer on Event ID 26
 schtasks /Create /RU "NT AUTHORITY\SYSTEM" /SC ONEVENT /MO "*[System[Provider[@Name='Application Popup'] and EventID=26]]" /EC System /RL HIGHEST /TN "Reboot on RNDR Virtual Memory Crash" /TR "shutdown /r /f" /F
