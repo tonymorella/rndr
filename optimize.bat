@@ -60,7 +60,7 @@ timeout /T 5 /NOBREAK > nul
 :: powershell -NoProfile -Command "Install-Module pssqlite -SkipPublisherCheck -Force"
 
 :: Change pagefile size
-wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=42000,MaximumSize=84000
+wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=41960,MaximumSize=76016
 
 ::  Reboot computer on Event ID 26
 schtasks /Create /RU "NT AUTHORITY\SYSTEM" /SC ONEVENT /MO "*[System[Provider[@Name='Application Popup'] and EventID=26]]" /EC System /RL HIGHEST /TN "Reboot on RNDR Virtual Memory Crash" /TR "shutdown /r /f" /F
@@ -154,7 +154,7 @@ reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v "Disabled" 
 reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v "DontShowUI" /t REG_DWORD /d 1 /f 
 reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v "Disabled" /t REG_DWORD /d 1 /f 
 reg add "HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\Windows Error Reporting" /v "DontShowUI" /t REG_DWORD /d 1 /f 
-reg add "HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\Windows Error Reporting" /v "Disabled" /t REG_DWORD /d 1 /f
+reg add "HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\Windows Error Reporting" /v "Disabled" /t REG_DWORD /d  /f
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Windows" /v "ErrorMode" /t REG_DWORD /d 2 /f
 
 ::  Disable Hibernate
