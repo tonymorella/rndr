@@ -290,10 +290,10 @@ param(
     }
 	
 	## Cleans up RNDR
-    if (Test-Path "C:\Users\*\AppData\Local\OctaneRender\") {
-        Remove-Item -Path "C:\Users\*\AppData\Local\OctaneRender\*" -Force -Recurse -Verbose -ErrorAction SilentlyContinue
+    if (Test-Path "C:\Users\*\AppData\Local\OctaneRender\rndr_cache") {
+        Remove-Item -Path "C:\Users\*\AppData\Local\OctaneRender\rndr_cache\*" -Force -Recurse -Verbose -ErrorAction SilentlyContinue
     } else {
-            Write-Host "C:\Users\Tony\AppData\Local\OctaneRender\rndr_cache\texCache\imageTex does not exist.                  " -NoNewline -ForegroundColor DarkGray
+            Write-Host "C:\Users\Tony\AppData\Local\OctaneRender\rndr_cache\ does not exist.                  " -NoNewline -ForegroundColor DarkGray
             Write-Host "[WARNING]" -ForegroundColor DarkYellow -BackgroundColor Black
     }
 
