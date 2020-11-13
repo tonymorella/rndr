@@ -38,7 +38,7 @@ cd /d %~dp0
 if '%1'=='ELEV' (del "%vbsGetPrivileges%" 1>nul 2>nul  &  shift /1)
 
 timeout /T 5 /NOBREAK > nul
-::  Backup Registery 
+:: Backup Registery 
 :: mkdir c:\RegBack
 :: reg export HKCR C:\RegBack\HKCR.Reg /y
 :: reg export HKCU C:\RegBack\HKCU.Reg /y
@@ -46,7 +46,7 @@ timeout /T 5 /NOBREAK > nul
 :: reg export HKU C:\RegBack\HKU.Reg /y
 :: reg export HKCC C:\RegBackHKCC.Reg /y
 
-::  Install OpenSSH
+:: Install OpenSSH
 :: powershell New-NetFirewallRule -Name sshd -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
 :: powershell -ExecutionPolicy Bypass -File install-sshd.ps1
 :: Set-Service sshd -StartupType Automatic
@@ -60,20 +60,29 @@ timeout /T 5 /NOBREAK > nul
 :: powershell -NoProfile -Command "Install-Module pssqlite -SkipPublisherCheck -Force"
 
 :: Change pagefile size
-wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=41960,MaximumSize=76016
+:: wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=41960,MaximumSize=76016
 
-::  Reboot computer on Event ID 26
+:: Reboot computer on Event ID 26
 schtasks /Create /RU "NT AUTHORITY\SYSTEM" /SC ONEVENT /MO "*[System[Provider[@Name='Application Popup'] and EventID=26]]" /EC System /RL HIGHEST /TN "Reboot on RNDR Virtual Memory Crash" /TR "shutdown /r /f" /F
 
-::  Memory Management
+:: Disable auotmatic driver updates for Windows 
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" /v "SearchOrderConfig" /t REG_DWORD /d 3 /f
+
+:: Disable Fast Statup
+reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Power" /v "HiberbootEnabled" /t REG_DWORD /d 0 /f 
+
+:: Disble Power Throttling
+reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" /v "PowerThrottlingOff" /t REG_DWORD /d 1 /f 
+
+:: Memory Management
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters" /v "EnableSuperfetch" /t REG_DWORD /d 0 /f 
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters" /v "EnablePrefetcher" /t REG_DWORD /d 0 /f 
 
-::  https://support.microsoft.com/en-us/help/312362/server-is-unable-to-allocate-memory-from-the-system-paged-pool
-:: reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v "PoolUsageMaximum" /t REG_DWORD /d 60 /f
-:: reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v "PagedPoolSize" /t REG_DWORD /d 0xFFFFFFFF /f
-reg delete "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v "PoolUsageMaximum" /f
-reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v "PagedPoolSize" /t REG_DWORD /d 0 /f
+:: https://support.microsoft.com/en-us/help/312362/server-is-unable-to-allocate-memory-from-the-system-paged-pool
+reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v "PoolUsageMaximum" /t REG_DWORD /d 60 /f
+reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v "PagedPoolSize" /t REG_DWORD /d 0xFFFFFFFF /f
+:: reg delete "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v "PoolUsageMaximum" /f
+:: reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v "PagedPoolSize" /t REG_DWORD /d 0 /f
 
 ::  Graphic settings for Nvidia
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" /v "TdrLevel"  /t REG_DWORD /d 3 /f 
@@ -83,68 +92,69 @@ reg add "HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" /v "TdrDdiDelay"
 ::  Disable IPV6 All Interfaces
 powershell -command "Disable-NetAdapterBinding -Name '*' -ComponentID ms_tcpip6"
 
-::  REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" /v "Debugger" /t REG_SZ /d "C:\windows\system32\cmd.exe" /f
-::  REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\Utilman.exe" /v "Debugger" /t REG_SZ /d "C:\windows\system32\cmd.exe" /f
-::  REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\DisplaySwitch.exe" /v "Debugger" /t REG_SZ /d "C:\windows\system32\cmd.exe" /f
+:: REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" /v "Debugger" /t REG_SZ /d "C:\windows\system32\cmd.exe" /f
+:: REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\Utilman.exe" /v "Debugger" /t REG_SZ /d "C:\windows\system32\cmd.exe" /f
+:: REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\DisplaySwitch.exe" /v "Debugger" /t REG_SZ /d "C:\windows\system32\cmd.exe" /f
 
-::  Disable screen saver and lock screen
+:: Disable screen saver and lock screen
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Personalization" /v "NoLockScreen" /t REG_DWORD /d 1 /f
 reg add "HKCU\Software\Policies\Microsoft\Windows\Control Panel\Desktop" /v "ScreenSaveTimeOut" /t REG_DWORD /d 0 /f 
 reg add "HKCU\Software\Policies\Microsoft\Windows\Control Panel\Desktop" /v "ScreenSaveActive" /t REG_DWORD /d 0 /f
 reg add "HKCU\Software\Policies\Microsoft\Windows\Control Panel\Desktop" /v "ScreenSaverIsSecure" /t REG_DWORD /d 0 /f
 
-::  Clasic Control Panel
+:: Clasic Control Panel
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "ForceClassicControlPanel" /t REG_DWORD /d 1 /f 
 
-::  Advertising ID
+:: Advertising ID
 reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo" /v "Enabled" /t REG_DWORD /d 0 /f
  
-::  Delivery optimization disabled
+:: Delivery optimization disabled
 reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization" /v "SystemSettingsDownloadMode" /t REG_DWORD /d 3 /f
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" /v "DownloadMode" /t REG_DWORD /d 0 /f 
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" /v "DODownloadMode" /t REG_DWORD /d 0 /f 
  
-::  Show titles in the taskbar
+:: Show titles in the taskbar
 reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "TaskbarGlomLevel" /t REG_DWORD /d 1 /f
  
-::  Hide system tray icons
+:: Hide system tray icons
 reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer" /v "EnableAutoTray" /t REG_DWORD /d 1 /f
  
-::  Show known file extensions
+:: Show known file extensions
 reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "HideFileExt" /t REG_DWORD /d 0 /f
  
-::  Show hidden files
-reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "Hidden" /t REG_DWORD /d 1 /f
+:: Show hidden files
+regadd "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "Hidden" /t REG_DWORD /d 1 /f
  
-::  Change default explorer view to my computer
+:: Change default explorer view to my computer
 reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "LaunchTo" /t REG_DWORD /d 1 /f
  
-::  Disable most used apps from appearing in the start menu
+:: Disable most used apps from appearing in the start menu
 reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "Start_TrackProgs" /t REG_DWORD /d 0 /f
  
-::  Remove search bar and only show icon
+:: Remove search bar and only show icon
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" /v "SearchboxTaskbarMode" /t REG_DWORD /d 1 /f
  
-::  Disable Security and Maintenance Notifications
+:: Disable Security and Maintenance Notifications
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.SystemToast.SecurityAndMaintenance" /v "Enabled" /t REG_DWORD /d 0 /f
  
-::  Hide Windows Ink Workspace Button
+:: Hide Windows Ink Workspace Button
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\PenWorkspace" /v "PenWorkspaceButtonDesiredVisibility" /t REG_DWORD /d 0 /f
  
-::  Disable Game DVR
+:: Disable Game DVR
 reg add "HKLM\System\GameConfigStore" /v "GameDVR_Enabled" /t REG_DWORD /d 0 /f
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" /v "AppCaptureEnabled" /t REG_DWORD /d 0 /f
  
-::  Show ribbon in File Explorer
+:: Show ribbon in File Explorer
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Ribbon" /v "MinimizedStateTabletModeOff" /t REG_DWORD /d 0 /f
  
-::  Hide Taskview button on Taskbar
+:: Hide Taskview button on Taskbar
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "ShowTaskViewButton" /t REG_DWORD /d 0 /f
  
-::  Hide People button from Taskbar
+:  Hide People button from Taskbar
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People" /v "PeopleBand" /t REG_DWORD /d 0 /f
 
-::  Disable Windows Error Reporting
+:: Disable Windows Error Reporting
+powershell -command "Disable-WindowsErrorReporting"
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting" /v "Disabled" /t REG_DWORD /d 1 /f 
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting" /v "DontShowUI" /t REG_DWORD /d 1 /f 
 reg add "HKCU\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting" /v "Disabled" /t REG_DWORD /d 1 /f 
@@ -157,36 +167,40 @@ reg add "HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\Windows Error Reporting" /v
 reg add "HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\Windows Error Reporting" /v "Disabled" /t REG_DWORD /d  /f
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Windows" /v "ErrorMode" /t REG_DWORD /d 2 /f
 
-::  Disable Hibernate
+:: Disable Hibernate
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Power" /v "HiberbootEnabled" /t REG_DWORD /d 0 /f 
 
-::  Core Parking
+:: Core Parking
+:: Unhide attribute 
 powercfg -attributes SUB_PROCESSOR CPMINCORES -ATTRIB_HIDE
-Powercfg -setacvalueindex scheme_current sub_processor CPMAXCORES 50
-Powercfg -setactive scheme_current
+powercfg -setacvalueindex scheme_current sub_processor CPMAXCORES 50
+powercfg -setactive scheme_current
 
 :: Turnoff Hibernarte
 powercfg /H off
 
-::  Disable notifications in Windows 10
+:: Set to high power mode
+powercfg -setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
+
+:: Disable notifications in Windows 10
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" /v "UseActionCenterExperience" /t REG_DWORD /d 0 /f
 
-:: Change auto start to 0
+:: Change auto start to 0 Delay
 reg add "HKLM\System\CurrentControlSet\Services\wscsvc" /v "DelayedAutoStart" /t REG_DWORD /d 0 /f
 
-::  Hide indication for compressed NTFS files
+:: Hide indication for compressed NTFS files
 reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "ShowCompColor" /t REG_DWORD /d 0 /f 
 
-::  Show computer shortcut on desktop
+:: Show computer shortcut on desktop
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" /v "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" /t REG_DWORD /d 0 /f 
 
-::  Classic vertical icon spacing
+:: Classic vertical icon spacing
 reg add "HKCU\Control Panel\Desktop\WindowMetrics" /v "IconVerticalSpacing" /t REG_SZ /d "-1150" /f 
 
-::  Remove versioning tab from properties
+:: Remove versioning tab from properties
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" /v "NoPreviousVersionsPage" /t REG_DWORD /d 1 /f 
 
-::  Disable jump lists
+:: Disable jump lists
 reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "Start_TrackDocs" /t REG_DWORD /d 0 /f 
 
 :: IE Settings
@@ -203,13 +217,13 @@ reg add "HKCU\Software\Policies\Microsoft\Internet Explorer\Main" /v "DisableFir
 reg add "HKCU\Software\Policies\Microsoft\Internet Explorer\Main" /v "RunOnceHasShown" /t REG_DWORD /d 1 /f 
 reg add "HKCU\Software\Policies\Microsoft\Internet Explorer\Main" /v "RunOnceComplete" /t REG_DWORD /d 1 /f 
 
-::  Disable Windows Search
+:: Disable Windows Search
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search" /v "AllowCortana" /t REG_DWORD /d 0 /f 
 reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" /v "CortanaEnabled" /t REG_DWORD /d 0 /f 
 reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" /v "BingSearchEnabled" /t REG_DWORD /d 0 /f 
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v "DisableLogonBackgroundImage" /t REG_DWORD /d 1 /f 
 
-::  Disable admin Shares
+:: Disable admin Shares
 reg add "HKLM\System\CurrentControlSet\Services\LanmanServer\Parameters" /v "AutoShareWks" /t REG_DWORD /d 0 /f 
 reg add "HKLM\System\CurrentControlSet\Services\LanmanServer\Parameters" /v "AutoShareServer" /t REG_DWORD /d 0 /f 
 
