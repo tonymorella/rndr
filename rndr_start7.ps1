@@ -30,6 +30,10 @@ if ($scriptpath) {
 
 Import-Module "$PSScriptRoot\functions.ps1"
 
+#Set Window size
+Set-WindowSize 80 50
+[console]::bufferwidth = 32766
+
 #Main Vars
 $version = 1109
 $mainpath = $scriptpath

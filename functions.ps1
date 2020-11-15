@@ -1,5 +1,3 @@
-
-
 # Countdown timer
 function Start-CountdownTimer {
   param (
@@ -201,10 +199,6 @@ Function Send-SendGridMail {
   Invoke-RestMethod @Parameters
 }
 
-#Set Window size
-Set-WindowSize 80 50
-[console]::bufferwidth = 32766
-
 Function Get-EtherDetails {
     #$unixdatetoday = ([int](Get-Date -UFormat %s -Millisecond 0))
     $etherscanget = "http://api.etherscan.io/api?module=account&action=tokentx&address=$rndrwalletid&startblock=0&endblock=999999999&sort=asc&apikey=$etherscanapikey"
@@ -224,7 +218,6 @@ Function Get-EtherDetails {
   }
   
 
-
 #SetLockMemoryPages permissions
 function SetLockMemoryPages {
     $TempLocation = "C:\Temp"
@@ -235,6 +228,7 @@ function SetLockMemoryPages {
     $ChangeTo2 = "SeLockMemoryPrivilege = $UserName,"
     $fileName = "$TempLocation\SecPolExport.cfg"
 
+    Remove-Item $fileName
     secedit /export /cfg $filename
     (Get-Content $fileName) -replace $ChangeFrom, $ChangeTo | Set-Content $fileName
     if ((Get-Content $fileName) | Where-Object { $_.Contains("SeLockMemoryPrivilege") }) {
