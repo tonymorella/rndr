@@ -1,11 +1,4 @@
-# Set active path to script-location:
-$scriptpath = $MyInvocation.MyCommand.Path
-if (!$scriptpath) {
-  $scriptpath = $psISE.CurrentFile.Fullpath
-}
-if ($scriptpath) {
-  $scriptpath = Split-Path $scriptpath -Parent
-}
+
 
 # Countdown timer
 function Start-CountdownTimer {

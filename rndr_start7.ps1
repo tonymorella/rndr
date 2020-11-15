@@ -3,8 +3,6 @@
 # Generated on: 11/09/2020
 # Donations ETH 0x39A6467226E55587D6de0DAB1EB696dAeC3EECAc (gravitymaster.eth)
 
-Import-Module .\functions.ps1
-
 #Get Admin
 param([switch]$Elevated)
 function Test-Admin {
@@ -29,6 +27,8 @@ if (!$scriptpath) {
 if ($scriptpath) {
   $scriptpath = Split-Path $scriptpath -Parent
 }
+
+Import-Module "$PSScriptRoot\functions.ps1"
 
 #Main Vars
 $version = 1109
