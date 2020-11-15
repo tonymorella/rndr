@@ -228,7 +228,7 @@ function SetLockMemoryPages {
     $ChangeTo2 = "SeLockMemoryPrivilege = $UserName,"
     $fileName = "$TempLocation\SecPolExport.cfg"
 
-    Remove-Item $fileName
+    Remove-Item $fileName -ErrorAction SilentlyContinue
     secedit /export /cfg $filename
     (Get-Content $fileName) -replace $ChangeFrom, $ChangeTo | Set-Content $fileName
     if ((Get-Content $fileName) | Where-Object { $_.Contains("SeLockMemoryPrivilege") }) {
@@ -241,6 +241,7 @@ function SetLockMemoryPages {
     Write-Host "Importing Security Policy…"
     secedit /configure /db secedit.sdb /cfg $fileName 1> $null
     Write-Host "Security Policy has been imported"
+    Remove-Item $fileName -ErrorAction SilentlyContinue
 }   
    
     

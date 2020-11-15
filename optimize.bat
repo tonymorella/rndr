@@ -93,7 +93,7 @@ reg add "HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" /v "TdrDdiDelay"
 powershell -command "Disable-NetAdapterBinding -Name '*' -ComponentID ms_tcpip6"
 
 :: Set pages in memory
-powershell -command "import-module .\functions.ps1 | SetLockMemoryPages"
+powershell -command "import-module .\functions.ps1; SetLockMemoryPages"
 
 :: REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" /v "Debugger" /t REG_SZ /d "C:\windows\system32\cmd.exe" /f
 :: REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\Utilman.exe" /v "Debugger" /t REG_SZ /d "C:\windows\system32\cmd.exe" /f
