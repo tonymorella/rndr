@@ -109,7 +109,8 @@ while ($true) {
   #RNDR Server check
   $RNDRProcessID = (Get-Process -name TCPSVCS -errorAction SilentlyContinue).id
   $regex_pid =  $RNDRProcessID.ForEach({ [RegEx]::Escape($_) }) -join '|'
-  $RNDRServerCheck = if(Get-NetTCPConnection -State Established -RemotePort 443 | Select-Object * | Where-Object  {$_.OwningProcess -match $regex_pid}){$true}
+  $RNDRServerCheck = if (Get-NetTCPConnection -State Established -RemotePort 443 | Select-Object * | Where-Object  {$_.OwningProcess -match $regex_pid})
+                        {$true} else {$false}
 
   #$RNDRServerCheck = ((Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.20.39.*" -ErrorAction Silent) `
   #    -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.20.40.*" -ErrorAction Silent) `
