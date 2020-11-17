@@ -234,7 +234,7 @@ while ($true) {
     Restart-Computer -Force
   }
   
-Check for RNDR App Connection to Server restart app if
+#Check for RNDR App Connection to Server restart app if
  elseif (($RNDRServerCheck) -eq $False) {
    $appRestartCount++
    $appRestartDate = Get-Date
