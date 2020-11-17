@@ -106,32 +106,19 @@ while ($true) {
   #$rndrappcrash1000b = Get-EventLog -LogName application -EntryType Error -InstanceId 1000 -message *WUDFHost* -After ((Get-Date).AddMinutes(-1)) -errorAction SilentlyContinue
   $rndrvmemcrach = Get-EventLog -LogName system -EntryType Information -InstanceId 26 -After ((Get-Date).AddMinutes(-1)) -errorAction SilentlyContinue
   
-  #$rndrsrvpid = (Get-Process -Name $rndrsrv -ErrorAction SilentlyContinue).Id
-  #$rndrsrvpid1 =  $rndrsrvpid.ForEach({ [RegEx]::Escape($_) }) -join '|'
-  #$RNDRServerCheck = Get-NetTCPConnection -ErrorAction SilentlyContinue | Where-Object { $rndrsrvpid1.State -like "Established" } | Where-Object {($rndrsrvpid1.RemotePort -eq "433") -or ($rndrsrvpid1.RemotePort -eq "3002")}
-  
-  #$RNDRProcessID = Get-Process -name TCPSVCS -errorAction SilentlyContinue
-  #  foreach ($oneProcess in $RNDRProcessID) {
-  #    if (Get-NetTCPConnection -state ESTABLISHED -RemotePort 443 -OwningProcess $oneProcess) {
-  #      $RNDRServerCheck = $true
-  #    } 
-  #    else {
-  #      $RNDRServerCheck = $false  
-  #    }
-  #  }
+  #RNDR Server check
+  $RNDRProcessID = (Get-Process -name TCPSVCS -errorAction SilentlyContinue).id
+  $regex_pid =  $RNDRProcessID.ForEach({ [RegEx]::Escape($_) }) -join '|'
+  $RNDRServerCheck = if(Get-NetTCPConnection -State Established -RemotePort 443 | Select-Object * | Where-Object  {$_.OwningProcess -match $regex_pid}){$true}
 
-  #  $RNDRProcessID = (Get-Process -name TCPSVCS -errorAction SilentlyContinue).id
-  #  $regex_pid =  $RNDRProcessID.ForEach({ [RegEx]::Escape($_) }) -join '|'
-  #  $RNDRServerCheck = Get-NetTCPConnection -State Established -RemotePort 443 | Select-Object * | Where-Object  {$_.OwningProcess -match $regex_pid}
-
-  $RNDRServerCheck = ((Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.20.39.*" -ErrorAction Silent) `
-      -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.20.40.*" -ErrorAction Silent) `
-      -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.22.52.*" -ErrorAction Silent) `
-      -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "172.67.38.*" -ErrorAction Silent) `
-      -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "99.84.174.*" -ErrorAction Silent) `
-      -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "52.54.211.*" -ErrorAction Silent) `
-      -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "172.67.16.*" -ErrorAction Silent)
-  )
+  #$RNDRServerCheck = ((Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.20.39.*" -ErrorAction Silent) `
+  #    -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.20.40.*" -ErrorAction Silent) `
+  #    -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "104.22.52.*" -ErrorAction Silent) `
+  #    -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "172.67.38.*" -ErrorAction Silent) `
+  #    -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "99.84.174.*" -ErrorAction Silent) `
+  #    -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "52.54.211.*" -ErrorAction Silent) `
+  #    -or (Get-NetTCPConnection -State Established -RemotePort 443 -RemoteAddress "172.67.16.*" -ErrorAction Silent)
+  #)
 
   $nodeuptime = (get-date) - (gcim Win32_OperatingSystem).LastBootUpTime | ForEach-Object { $_.TotalHours }
   
