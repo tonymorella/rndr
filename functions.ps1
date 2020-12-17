@@ -48,7 +48,7 @@ function Exit-RNDR {
 function get-nvidiasmi {
   $pinfo = New-Object System.Diagnostics.ProcessStartInfo
   $pinfo.FileName = "nvidia-smi.exe"
-  $pinfo.Arguments = "--format=csv,noheader --query-gpu=index,name,utilization.gpu,memory.used,utilization.memory,power.draw,temperature.gpu,pstate,fan.speed"
+  $pinfo.Arguments = "--format=csv,noheader --query-gpu=pci.bus,name,utilization.gpu,memory.used,utilization.memory,power.draw,temperature.gpu,pstate,fan.speed"
   $pinfo.RedirectStandardError = $true
   $pinfo.RedirectStandardOutput = $true
   $pinfo.UseShellExecute = $false

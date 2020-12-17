@@ -303,7 +303,7 @@ while ($true) {
   Write-Host -ForegroundColor Yellow "====================================================================="
  
   #Show Nvidia Details
-  $header = 'IX', 'Name', 'GPU%', 'VRAM Used', 'VRAM%', 'Watts  ', 'Temp', 'PS', 'Fan%'
+  $header = 'pci.bus', 'Name', 'GPU%', 'VRAM Used', 'VRAM%', 'Watts  ', 'Temp', 'PS', 'Fan%'
   get-nvidiasmi | ConvertFrom-Csv -Header $header | Format-Table
   Write-Host -ForegroundColor Yellow "====================================================================="
   
